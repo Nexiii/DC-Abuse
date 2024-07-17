@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
@@ -27,21 +29,21 @@ public class MessageReceiveListener extends ListenerAdapter {
 		  EmbedBuilder error = new EmbedBuilder();
 		  error.setColor(Color.RED);
 		  error.setTitle("Error");
-	    	if(args[0].equals(">upload")) {
-	    		event.getMessage().delete().queue();
-	    		EmbedBuilder idle = new EmbedBuilder();
-	    		idle.setColor(Color.BLUE);
-	    		idle.setTitle("Working");
-	    		idle.setDescription("Working on " + args[1]+"/"+args[2]);
-	    		event.getChannel().sendMessageEmbeds(idle.build()).queue( message -> message.delete().queueAfter(2, TimeUnit.SECONDS) );
-	    		Random rand = new Random();
-				int randm = rand.nextInt(1000000, 99999999);
-	    		try {
-	    			if(args[0] != null) {
-		    			if(args[1] != null) {
-		    				if(args[2] != null) {
-		    					File file = new File(args[1]+ "/" + args[2]);
+	    	if(args.length == 3) {
+				if(args[0].equals(">upload")) {
+		    		event.getMessage().delete().queue();
+		    		Random rand = new Random();
+					int randm = rand.nextInt(1000000, 99999999);
+    				if(args[1] != null) {
+	    				if(args[2] != null) {
+	    					try {
+	    						File file = new File(args[1]+ "/" + args[2]);
 				    			if(file.exists()) {
+						    		EmbedBuilder idle = new EmbedBuilder();
+						    		idle.setColor(Color.BLUE);
+						    		idle.setTitle("Working");
+						    		idle.setDescription("Working on " + args[1]+"/"+args[2]);
+				    				event.getChannel().sendMessageEmbeds(idle.build()).queue( message -> message.delete().queueAfter(2, TimeUnit.SECONDS) );
 				    				String encoded = encodeFileToBase64(file);
 				    				String converted = toHex(encoded);
 				    				byte[] btDataFile = converted.getBytes();
@@ -50,45 +52,65 @@ public class MessageReceiveListener extends ListenerAdapter {
 										osf.write(btDataFile);
 										osf.flush();
 									}
-				    				if(of.getAbsoluteFile().getTotalSpace() > 25000000) {
-					    				FileUpload convertedFile = FileUpload.fromData(of);
-					    				EmbedBuilder complete = new EmbedBuilder();
-					    				complete.setColor(Color.GREEN);
-					    				complete.setTitle("Complete | ID: " + randm);
-					    				complete.setDescription("File Encoded and Uploaded");
-					    				complete.setFooter(Integer.toString(randm));
-					    				event.getChannel().sendMessageEmbeds(complete.build()).queue();
+				    				FileUpload convertedFile = FileUpload.fromData(of);
+				    				EmbedBuilder complete = new EmbedBuilder();
+				    				complete.setColor(Color.GREEN);
+				    				complete.setTitle("Complete | ID: " + randm);
+				    				complete.setDescription("File Encoded and Uploaded");
+				    				complete.setFooter(Integer.toString(randm));
+				    				Path path = Paths.get("temp//encoded-"+ randm+ "-" +args[2]);
+									int bytes = Files.readAllBytes(path).length;
+									System.out.println(timeStamp+"[DC/Abuse] ID: "+randm+" | Bytes: "+bytes);
+				    				if(bytes < 26214400) {
+				    					event.getChannel().sendMessageEmbeds(complete.build()).queue();
 					    				event.getChannel().sendFiles(convertedFile).queue();
-					    				of.delete();
 				    				} else {
 				    					  error.setDescription("Size too Big");
 				    					  event.getChannel().sendMessageEmbeds(error.build()).queue( message -> message.delete().queueAfter(2, TimeUnit.SECONDS) );
-				    				}
+				    				} 
 				    				for(File tempFile: oldTemp.listFiles()) {
 				    				    if (!tempFile.isDirectory()) {
 				    				    	tempFile.delete();
-				    						System.out.println(timeStamp + "[DC/Abuse] Temp Cleaned");
 				    				    }
 				    				}
+				    				System.out.println(timeStamp + "[DC/Abuse] Temp Cleaned");
+				    			} else {
+				    				error.setDescription("File doesn't exists");
+				    				event.getChannel().sendMessageEmbeds(error.build()).queue( message -> message.delete().queueAfter(2, TimeUnit.SECONDS) );
 				    			}
-				    		}		    				
-		    			} else {
-		    				error.setDescription("File doesnt Exists");
+	    					} catch (ArrayIndexOutOfBoundsException e) {
+	    						event.getMessage().delete().queue();
+	    						error.setDescription("Error using Command");
+	    						event.getChannel().sendMessageEmbeds(error.build()).queue( message -> message.delete().queueAfter(2, TimeUnit.SECONDS) );
+	    					} catch (FileNotFoundException e) {} catch (IOException e) {}
+			    		}	else {
+			    			event.getMessage().delete().queue();
+			    			error.setDescription("Error using Command");
 		    				event.getChannel().sendMessageEmbeds(error.build()).queue( message -> message.delete().queueAfter(2, TimeUnit.SECONDS) );
-		    			}
-		    		}
-				} catch (ArrayIndexOutOfBoundsException e) {
-					error.setDescription("Error using Command");
-					event.getChannel().sendMessageEmbeds(error.build()).queue( message -> message.delete().queueAfter(2, TimeUnit.SECONDS) );
-				} catch (FileNotFoundException e) {
-				} catch (IOException e) {
+		    			}	    				
+	    			} else {
+	    				event.getMessage().delete().queue();
+	    				error.setDescription("Error using Command");
+	    				event.getChannel().sendMessageEmbeds(error.build()).queue( message -> message.delete().queueAfter(2, TimeUnit.SECONDS) );
+	    			}
+    			} else {
+    				event.getMessage().delete().queue();
+    				error.setDescription("Error using Command");
+    				event.getChannel().sendMessageEmbeds(error.build()).queue( message -> message.delete().queueAfter(2, TimeUnit.SECONDS) );
+    			}
+	    	} else if (args.length == 1) {
+	    		if (args[0].equals(">help")) {
+	    			event.getMessage().delete().queue();
+		    		EmbedBuilder complete = new EmbedBuilder();
+					complete.setColor(Color.MAGENTA);
+					complete.setTitle("Help");
+					complete.setDescription(">upload <file path> <file name> | To upload the encoded file to Discord");
+					event.getChannel().sendMessageEmbeds(complete.build()).queue();
 				}
-	    	} else if (args[0].equals(">help")) {
-	    		EmbedBuilder complete = new EmbedBuilder();
-				complete.setColor(Color.MAGENTA);
-				complete.setTitle("Help");
-				complete.setDescription(">upload <file path> <file name> | To upload the encoded file to Discord");
-				event.getChannel().sendMessageEmbeds(complete.build()).queue();
+	    	} else {
+	    		event.getMessage().delete().queue();
+				error.setDescription("Error using Command");
+				event.getChannel().sendMessageEmbeds(error.build()).queue( message -> message.delete().queueAfter(2, TimeUnit.SECONDS) );
 			}
 	  }
 	  	private static String encodeFileToBase64(File file) {

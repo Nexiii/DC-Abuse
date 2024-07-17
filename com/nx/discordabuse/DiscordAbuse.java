@@ -20,6 +20,7 @@ public class DiscordAbuse {
 
 	public static void main(String[] args) {
 		String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ").format(new Date());
+		final String version = "0.1.1_A";
 		  try {
 			  File temp = new File("temp/");
 			  if(!temp.exists()) {
@@ -30,6 +31,7 @@ public class DiscordAbuse {
 		      	.addEventListeners(new MessageReceiveListener())
 		      	.setStatus(OnlineStatus.DO_NOT_DISTURB)
 		      	.build();
+			  System.out.println(timeStamp + "[DC/Abuse] Version: "+version);
 			  System.out.println(timeStamp + "[DC/Abuse] Bot started");
 			  temp.deleteOnExit();
 		} catch (IOException e) {
