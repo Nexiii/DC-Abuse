@@ -3,6 +3,8 @@
 0.1.1_A
 
 # DC/Abuse
+Code based on [JDA](https://github.com/discord-jda/JDA)
+
 # Installation
 1 -> Extract latest build of DC/Abuse
 
