@@ -15,16 +15,19 @@ import java.util.HexFormat;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import com.nx.discordabuse.DiscordAbuse;
+
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.utils.FileUpload;
 
 public class MessageReceiveListener extends ListenerAdapter {
+	Random rand = new Random();
+	int randm = rand.nextInt(1000000, 99999999);
 	  @Override
-	  public void onMessageReceived(MessageReceivedEvent event) throws ArrayIndexOutOfBoundsException {
+	  public void onMessageReceived(MessageReceivedEvent event) throws IndexOutOfBoundsException {
 		  String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ").format(new Date());
-		  File oldTemp = new File("temp/");
 		  String[] args = event.getMessage().getContentRaw().split(" ");
 		  EmbedBuilder error = new EmbedBuilder();
 		  error.setColor(Color.RED);
@@ -32,8 +35,6 @@ public class MessageReceiveListener extends ListenerAdapter {
 	    	if(args.length == 3) {
 				if(args[0].equals(">upload")) {
 		    		event.getMessage().delete().queue();
-		    		Random rand = new Random();
-					int randm = rand.nextInt(1000000, 99999999);
     				if(args[1] != null) {
 	    				if(args[2] != null) {
 	    					try {
@@ -46,28 +47,28 @@ public class MessageReceiveListener extends ListenerAdapter {
 				    				event.getChannel().sendMessageEmbeds(idle.build()).queue( message -> message.delete().queueAfter(2, TimeUnit.SECONDS) );
 				    				String encoded = encodeFileToBase64(file);
 				    				String converted = toHex(encoded);
-				    				byte[] btDataFile = converted.getBytes();
-				    				File of = new File("temp//encoded-"+ randm+ "-" +args[2]);
-				    				try (FileOutputStream osf = new FileOutputStream(of)) {
-										osf.write(btDataFile);
-										osf.flush();
+				    				byte[] convertedBytes = converted.getBytes();
+				    				File encodedFile = new File("temp//encoded-"+ randm+ "-" +args[2]);
+				    				try (FileOutputStream fos = new FileOutputStream(encodedFile)) {
+				    					fos.write(convertedBytes);
+				    					fos.flush();
 									}
-				    				FileUpload convertedFile = FileUpload.fromData(of);
+				    				FileUpload convertedFile = FileUpload.fromData(encodedFile);
 				    				EmbedBuilder complete = new EmbedBuilder();
 				    				complete.setColor(Color.GREEN);
-				    				complete.setTitle("Complete | ID: " + randm);
+				    				complete.setTitle("Complete");
 				    				complete.setDescription("File Encoded and Uploaded");
-				    				complete.setFooter(Integer.toString(randm));
 				    				Path path = Paths.get("temp//encoded-"+ randm+ "-" +args[2]);
 									int bytes = Files.readAllBytes(path).length;
 									System.out.println(timeStamp+"[DC/Abuse] ID: "+randm+" | Bytes: "+bytes);
 				    				if(bytes < 26214400) {
-				    					event.getChannel().sendMessageEmbeds(complete.build()).queue();
-					    				event.getChannel().sendFiles(convertedFile).queue();
+				    					event.getChannel().sendMessageEmbeds(complete.build()).queue( message -> message.delete().queueAfter(5, TimeUnit.SECONDS) );
+				    					event.getChannel().sendMessage(Integer.toString(randm)).addFiles(convertedFile).queue();
 				    				} else {
 				    					  error.setDescription("Size too Big");
 				    					  event.getChannel().sendMessageEmbeds(error.build()).queue( message -> message.delete().queueAfter(2, TimeUnit.SECONDS) );
-				    				} 
+				    				}
+				    				File oldTemp = new File("temp/");
 				    				for(File tempFile: oldTemp.listFiles()) {
 				    				    if (!tempFile.isDirectory()) {
 				    				    	tempFile.delete();
@@ -98,20 +99,40 @@ public class MessageReceiveListener extends ListenerAdapter {
     				error.setDescription("Error using Command");
     				event.getChannel().sendMessageEmbeds(error.build()).queue( message -> message.delete().queueAfter(2, TimeUnit.SECONDS) );
     			}
-	    	} else if (args.length == 1) {
-	    		if (args[0].equals(">help")) {
+	    	}
+	    	if (args.length == 1) {
+	    		if(args[0].equals(">help")) {
 	    			event.getMessage().delete().queue();
 		    		EmbedBuilder complete = new EmbedBuilder();
 					complete.setColor(Color.MAGENTA);
-					complete.setTitle("Help");
+					complete.setTitle("Help | Commands");
 					complete.setDescription(">upload <file path> <file name> | To upload the encoded file to Discord");
+					complete.setFooter("v"+DiscordAbuse.version);
 					event.getChannel().sendMessageEmbeds(complete.build()).queue();
+	    		} else {
+	    			int oldRandm = randm;
+		    		if(event.getMessage().getContentRaw().contains(Integer.toString(oldRandm)) || event.getAuthor().getId() == DiscordAbuse.botID) {
+		    			String fileName = event.getMessage().getAttachments().get(0).getFileName();
+		    			String messageID = event.getMessage().getId();
+		    			byte[] messageText = messageID.getBytes();
+	    				File of = new File("files//"+fileName+".txt");
+	    				try (FileOutputStream osf = new FileOutputStream(of)) {
+							osf.write(messageText);
+							osf.flush();
+						} catch (FileNotFoundException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+		    		}
+	    		}
+			}/* else if(args.length == 2) {
+				if(args[0].equals(">download")) {
+					if(args[1] != null) {
+						
+					}
 				}
-	    	} else {
-	    		event.getMessage().delete().queue();
-				error.setDescription("Error using Command");
-				event.getChannel().sendMessageEmbeds(error.build()).queue( message -> message.delete().queueAfter(2, TimeUnit.SECONDS) );
-			}
+			} else {}*/
 	  }
 	  	private static String encodeFileToBase64(File file) {
 		    try {
