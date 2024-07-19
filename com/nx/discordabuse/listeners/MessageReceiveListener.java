@@ -111,19 +111,21 @@ public class MessageReceiveListener extends ListenerAdapter {
 					event.getChannel().sendMessageEmbeds(complete.build()).queue();
 	    		} else {
 	    			int oldRandm = randm;
-		    		if(event.getMessage().getContentRaw().contains(Integer.toString(oldRandm)) && event.getAuthor().getId() == DiscordAbuse.botID) {
-		    			String fileName = event.getMessage().getAttachments().get(0).getFileName();
-		    			String messageID = event.getMessage().getId();
-		    			byte[] messageText = messageID.getBytes();
-	    				File of = new File("files//"+fileName+".txt");
-	    				try (FileOutputStream osf = new FileOutputStream(of)) {
-							osf.write(messageText);
-							osf.flush();
-						} catch (FileNotFoundException e) {
-							e.printStackTrace();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
+		    		if(event.getMessage().getContentRaw().contains(Integer.toString(oldRandm))) {
+		    			if(event.getMessage().getAuthor().getId().equals(DiscordAbuse.botID)) {
+		    				String fileName = event.getMessage().getAttachments().get(0).getFileName();
+			    			String messageID = event.getMessage().getId();
+			    			byte[] messageText = messageID.getBytes();
+		    				File of = new File("files//"+fileName+".txt");
+		    				try (FileOutputStream osf = new FileOutputStream(of)) {
+								osf.write(messageText);
+								osf.flush();
+							} catch (FileNotFoundException e) {
+								e.printStackTrace();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+		    			}
 		    		}
 	    		}
 			}else if(args.length == 2) {
