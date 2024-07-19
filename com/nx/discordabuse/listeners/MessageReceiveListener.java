@@ -111,7 +111,7 @@ public class MessageReceiveListener extends ListenerAdapter {
 					event.getChannel().sendMessageEmbeds(complete.build()).queue();
 	    		} else {
 	    			int oldRandm = randm;
-		    		if(event.getMessage().getContentRaw().contains(Integer.toString(oldRandm)) || event.getAuthor().getId() == DiscordAbuse.botID) {
+		    		if(event.getMessage().getContentRaw().contains(Integer.toString(oldRandm)) && event.getAuthor().getId() == DiscordAbuse.botID) {
 		    			String fileName = event.getMessage().getAttachments().get(0).getFileName();
 		    			String messageID = event.getMessage().getId();
 		    			byte[] messageText = messageID.getBytes();
@@ -126,13 +126,13 @@ public class MessageReceiveListener extends ListenerAdapter {
 						}
 		    		}
 	    		}
-			}/* else if(args.length == 2) {
+			}else if(args.length == 2) {
 				if(args[0].equals(">download")) {
 					if(args[1] != null) {
-						
+						event.getChannel().retrieveMessageById(DiscordAbuse.botID);
 					}
 				}
-			} else {}*/
+			} else {}
 	  }
 	  	private static String encodeFileToBase64(File file) {
 		    try {
