@@ -56,8 +56,9 @@ public class DiscordAbuse {
 									.setStatus(OnlineStatus.DO_NOT_DISTURB).build();
 							System.out.println(timeStamp + "[DC/Abuse] Version: " + version);
 							if (!result.equals(version)) {
-								System.out.println(
-										timeStamp + "[DC/Abuse] A newer version is available (v" + result + ")");
+								System.out.println(timeStamp + "[DC/Abuse] A newer version is available (v" + result + ")");
+							} else {
+								System.out.println(timeStamp+"[DC/Abuse] Latest version installed.");
 							}
 							System.out.println(timeStamp + "[DC/Abuse] Bot started");
 						} else {
@@ -79,6 +80,7 @@ public class DiscordAbuse {
 			}
 
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

@@ -109,14 +109,8 @@ public class MessageReceiveListener extends ListenerAdapter {
 					event.getChannel().sendMessageEmbeds(error.build())
 							.queue(message -> message.delete().queueAfter(2, TimeUnit.SECONDS));
 				}
-			} else {
-				event.getMessage().delete().queue();
-				error.setDescription("Error using Command");
-				event.getChannel().sendMessageEmbeds(error.build())
-						.queue(message -> message.delete().queueAfter(2, TimeUnit.SECONDS));
 			}
-		}
-		if (args.length == 1) {
+		}else if (args.length == 1) {
 			if (args[0].equals(">help")) {
 				event.getMessage().delete().queue();
 				EmbedBuilder complete = new EmbedBuilder();
@@ -129,22 +123,18 @@ public class MessageReceiveListener extends ListenerAdapter {
 			} else {
 				int oldRandm = randm;
 				if (event.getMessage().getContentRaw().contains(Integer.toString(oldRandm))) {
-					if (event.getMessage().getAuthor().getId().equals(DiscordAbuse.botID)) {
+					if (event.getMessage().getAuthor().getId().equals(DiscordAbuse.botID.trim())) {
 						String messageID = event.getMessage().getId();
 						byte[] messageText = messageID.getBytes();
 						File of = new File("files//" + oldRandm + ".txt");
 						try (FileOutputStream osf = new FileOutputStream(of)) {
 							osf.write(messageText);
 							osf.flush();
-						} catch (FileNotFoundException e) {
-							e.printStackTrace();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
+						} catch (FileNotFoundException e) { } catch (IOException e) { }
 					}
 				}
 			}
-		} else if (args.length == 2) {
+		}else if (args.length == 2) {
 			if (args[0].equals(">download")) {
 				event.getMessage().delete().queue();
 				if (args[1] != null) {
@@ -155,16 +145,13 @@ public class MessageReceiveListener extends ListenerAdapter {
 								try {
 									String messageID = readFile(dwFile.getPath(), StandardCharsets.UTF_8);
 									event.getChannel().retrieveMessageById(messageID).queue((message) -> {
-										System.out.println(message.getAttachments().get(0).getUrl());
 										try {
 											saveUrl("temp//downloaded-" + message.getAttachments().get(0).getFileName(),message.getAttachments().get(0).getUrl());
 											byte[] hexBytes;
 											try {
 												hexBytes = HexFormat.of().parseHex(readFile("temp//downloaded-"+ message.getAttachments().get(0).getFileName(),StandardCharsets.UTF_8));
 												byte[] basetoString = Base64.getDecoder().decode(hexBytes);
-												File decodedFile = new File("temp//decoded-"
-														+ message.getAttachments().get(0).getFileName());
-												System.out.println(basetoString.toString());
+												File decodedFile = new File("temp//decoded-"+ message.getAttachments().get(0).getFileName());
 												try (FileOutputStream fos = new FileOutputStream(decodedFile)) {
 													fos.write(basetoString);
 													fos.flush();
@@ -183,13 +170,7 @@ public class MessageReceiveListener extends ListenerAdapter {
 										}
 									}
 									System.out.println(timeStamp + "[DC/Abuse] Temp Cleaned");
-								} catch (IOException e) {
-								}
-							} else {
-								event.getMessage().delete().queue();
-								error.setDescription("File not found");
-								event.getChannel().sendMessageEmbeds(error.build())
-										.queue(message -> message.delete().queueAfter(2, TimeUnit.SECONDS));
+								} catch (IOException e) { }
 							}
 						} else {
 							event.getMessage().delete().queue();
@@ -204,17 +185,7 @@ public class MessageReceiveListener extends ListenerAdapter {
 					event.getChannel().sendMessageEmbeds(error.build())
 							.queue(message -> message.delete().queueAfter(2, TimeUnit.SECONDS));
 				}
-			} else {
-				event.getMessage().delete().queue();
-				error.setDescription("Error using Command");
-				event.getChannel().sendMessageEmbeds(error.build())
-						.queue(message -> message.delete().queueAfter(2, TimeUnit.SECONDS));
 			}
-		} else {
-			event.getMessage().delete().queue();
-			error.setDescription("Error using Command");
-			event.getChannel().sendMessageEmbeds(error.build())
-					.queue(message -> message.delete().queueAfter(2, TimeUnit.SECONDS));
 		}
 	}
 
