@@ -55,7 +55,7 @@ public class DiscordAbuse {
 									.addEventListeners(new MessageReceiveListener())
 									.setStatus(OnlineStatus.DO_NOT_DISTURB).build();
 							System.out.println(timeStamp + "[DC/Abuse] Version: " + version);
-							if (result != version) {
+							if (!result.equals(version)) {
 								System.out.println(
 										timeStamp + "[DC/Abuse] A newer version is available (v" + result + ")");
 							}
