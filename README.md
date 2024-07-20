@@ -1,13 +1,17 @@
 # WORK IN PROGRESS
 # Version
-0.1.2.1_A
+0.1.3_A
 
 # DC/Abuse
-Code based on [JDA](https://github.com/discord-jda/JDA)
+Code based on [JDA 5.0.0](https://github.com/discord-jda/JDA)
 
 # Changelog
 
--> Hotfix
+-> Added >download function
+
+-> Fixed some minor bugs
+
+-> Added version check on start
 
 # Installation
 1 -> Extract latest build of DC/Abuse.
