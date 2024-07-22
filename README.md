@@ -3,7 +3,7 @@
 0.1.3.1_B
 
 # DC/Abuse
-Code based on [JDA 5.0.0](https://github.com/discord-jda/JDA) & on [SLF4J-NOP](https://repo1.maven.org/maven2/org/slf4j/slf4j-nop/2.1.0-alpha1/slf4j-nop-2.1.0-alpha1.jar)
+Code based on [JDA 5.0.0](https://github.com/discord-jda/JDA)
 
 # Changelog
 
