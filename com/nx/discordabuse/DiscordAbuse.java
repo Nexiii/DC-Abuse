@@ -17,11 +17,11 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 
 public class DiscordAbuse {
 
-	public static final String version = "0.1.3_A";
+	public static final String version = "0.1.3.1_B";
 	public static String botID;
+	public static final String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ").format(new Date());
 
 	public static void main(String[] args) {
-		String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ").format(new Date());
 		URL url;
 		try {
 			url = new URL("https://raw.githubusercontent.com/Nexiii/DC-Abuse/main/version.txt");

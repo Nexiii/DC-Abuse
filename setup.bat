@@ -8,7 +8,7 @@ type nul>cfg/id.txt
 
 cls
 
-echo Made by Nexiii / v0.1.3_A
+echo Made by Nexiii / v0.1.3.1_B
 set /p token=Enter your Bot token: 
 echo %token%>>cfg/token.txt
 set /p id=Enter your Bot ID: 

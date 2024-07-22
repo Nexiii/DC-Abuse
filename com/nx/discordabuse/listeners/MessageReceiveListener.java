@@ -13,9 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.Base64;
-import java.util.Date;
 import java.util.HexFormat;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +31,6 @@ public class MessageReceiveListener extends ListenerAdapter {
 
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) throws IndexOutOfBoundsException {
-		String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ").format(new Date());
 		String[] args = event.getMessage().getContentRaw().split(" ");
 		EmbedBuilder error = new EmbedBuilder();
 		error.setColor(Color.RED);
@@ -67,7 +64,7 @@ public class MessageReceiveListener extends ListenerAdapter {
 								complete.setDescription("File Encoded and Uploaded");
 								Path path = Paths.get("temp//encoded-" + randm + "-" + args[2]);
 								int bytes = Files.readAllBytes(path).length;
-								System.out.println(timeStamp + "[DC/Abuse] ID: " + randm + " | Bytes: " + bytes);
+								System.out.println(DiscordAbuse.timeStamp + "[DC/Abuse] ID: " + randm + " | Bytes: " + bytes);
 								if (bytes < 26214400) {
 									event.getChannel().sendMessageEmbeds(complete.build())
 											.queue(message -> message.delete().queueAfter(5, TimeUnit.SECONDS));
@@ -83,7 +80,7 @@ public class MessageReceiveListener extends ListenerAdapter {
 										tempFile.delete();
 									}
 								}
-								System.out.println(timeStamp + "[DC/Abuse] Temp Cleaned");
+								System.out.println(DiscordAbuse.timeStamp + "[DC/Abuse] Temp Cleaned");
 							} else {
 								error.setDescription("File doesn't exists");
 								event.getChannel().sendMessageEmbeds(error.build())
@@ -118,8 +115,22 @@ public class MessageReceiveListener extends ListenerAdapter {
 				complete.setTitle("Help | Commands");
 				complete.addField("Commands:",">upload <file path> <file name> | To upload the encoded file to Discord", false);
 				complete.addField("", ">download <uploadID> | To download the decoded file from Discord", false);
-				complete.setFooter("v" + DiscordAbuse.version);
+				complete.addField("", ">clear | To clear the temp folder", false);
+				complete.setFooter("v" + DiscordAbuse.version + " | Made by Nexiii");
 				event.getChannel().sendMessageEmbeds(complete.build()).queue();
+			} else if(args[0].equals(">clear")){
+				event.getMessage().delete().queue();
+				EmbedBuilder clearEmbed = new EmbedBuilder();
+				clearEmbed.setColor(Color.MAGENTA);
+				clearEmbed.setTitle("Cleared 'temp/' folder");
+				File oldTemp = new File("temp/");
+				for (File tempFile : oldTemp.listFiles()) {
+					if (!tempFile.isDirectory()) {
+						tempFile.delete();
+					}
+				}
+				System.out.println(DiscordAbuse.timeStamp + "[DC/Abuse] Temp Cleaned");
+				event.getChannel().sendMessageEmbeds(clearEmbed.build()).queue( message -> message.delete().queueAfter(3, TimeUnit.SECONDS));
 			} else {
 				int oldRandm = randm;
 				if (event.getMessage().getContentRaw().contains(Integer.toString(oldRandm))) {
@@ -169,7 +180,7 @@ public class MessageReceiveListener extends ListenerAdapter {
 											tempFile.delete();
 										}
 									}
-									System.out.println(timeStamp + "[DC/Abuse] Temp Cleaned");
+									System.out.println(DiscordAbuse.timeStamp + "[DC/Abuse] Temp Cleaned");
 								} catch (IOException e) { }
 							}
 						} else {

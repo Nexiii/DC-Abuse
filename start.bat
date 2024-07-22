@@ -1,5 +1,5 @@
 @echo off
-title Discord Abuse Bot 0.1.3_A
+title Discord Abuse Bot 0.1.3.1_B
 color 5
 
 cls
