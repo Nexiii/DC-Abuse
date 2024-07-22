@@ -9,8 +9,6 @@ Code based on [JDA 5.0.0](https://github.com/discord-jda/JDA)
 
 -> Added >clear command
 
--> 
-
 # Installation
 1 -> Extract latest build of DC/Abuse.
 
