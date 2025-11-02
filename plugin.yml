@@ -1,0 +1,6 @@
+name: SimpleTabTPS
+version: 1.0
+main: io.nexiii.stt.SimpleTabTPS
+api-version: 1.21
+author: Nexiii
+description: Shows Ping, Server TPS and Server RAM in the Tablist
